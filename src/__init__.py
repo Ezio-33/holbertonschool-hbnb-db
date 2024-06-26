@@ -2,11 +2,13 @@
 
 from flask import Flask
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 cors = CORS()
 
 
-def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
+def create_app() -> Flask:
     """
     Create a Flask app with the given configuration class.
     The default configuration class is DevelopmentConfig.
@@ -14,7 +16,12 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
     app = Flask(__name__)
     app.url_map.strict_slashes = False
 
-    app.config.from_object(config_class)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    if app.config('DEBUG'):
+        print("The application is running in development mode.")
+    else:
+        print("The application is not running in development mode.")
 
     register_extensions(app)
     register_routes(app)
@@ -26,7 +33,7 @@ def create_app(config_class="src.config.DevelopmentConfig") -> Flask:
 def register_extensions(app: Flask) -> None:
     """Register the extensions for the Flask app"""
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
-    # Further extensions can be added here
+    db.init_app(app)
 
 
 def register_routes(app: Flask) -> None:

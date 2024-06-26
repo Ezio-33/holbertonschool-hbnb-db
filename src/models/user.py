@@ -2,20 +2,28 @@
 User related functionality
 """
 
-from src.models.base import Base
+from src.persistence import db
+from src.persistence import FileRepository
 
 
-class User(Base):
-    """User representation"""
+class User(db.Model):
+    """ """
+    id = db.Column(db.String(36), primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    first_name = db.Column(db.String(120), nullable=False)
+    last_name = db.Column(db.String(120), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
-    email: str
-    first_name: str
-    last_name: str
-
-    def __init__(self, email: str, first_name: str, last_name: str, **kw):
-        """Dummy init"""
+    def __init__(self, email: str, password: str, first_name: str, last_name: str, **kw):
+        """ Initialize an user with the attributs email, password, first_name
+            and last_name.
+        """
         super().__init__(**kw)
         self.email = email
+        self.password = password
         self.first_name = first_name
         self.last_name = last_name
 
@@ -70,4 +78,5 @@ class User(Base):
 
         repo.update(user)
 
+        db.session.commit()
         return user
