@@ -2,15 +2,17 @@
 City related functionality
 """
 
-from src.models.base import Base
+from src.persistence import db
 from src.models.country import Country
 
 
-class City(Base):
+class City(db.Model):
     """City representation"""
-
-    name: str
-    country_code: str
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    country_code = db.Column(db.String(36), db.ForeignKey('country.code'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
     def __init__(self, name: str, country_code: str, **kw) -> None:
         """Dummy init"""
@@ -36,7 +38,7 @@ class City(Base):
     @staticmethod
     def create(data: dict) -> "City":
         """Create a new city"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         country = Country.get(data["country_code"])
 
@@ -45,14 +47,14 @@ class City(Base):
 
         city = City(**data)
 
-        repo.save(city)
+        FileRepository.save(city)
 
         return city
 
     @staticmethod
     def update(city_id: str, data: dict) -> "City":
         """Update an existing city"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         city = City.get(city_id)
 
@@ -62,6 +64,6 @@ class City(Base):
         for key, value in data.items():
             setattr(city, key, value)
 
-        repo.update(city)
+        FileRepository.update(city)
 
         return city
