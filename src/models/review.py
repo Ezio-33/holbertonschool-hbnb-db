@@ -7,7 +7,7 @@ from src.models.place import Place
 from src.models.user import User
 
 
-class Review(DBRepository):
+class Review(db.Model):
     """Review representation"""
     id = db.Column(db.String(36), primary_key=True)
     comment = db.Column(db.String(255), nullable=False)
