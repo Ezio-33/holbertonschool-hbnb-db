@@ -3,7 +3,6 @@ User related functionality
 """
 
 from src.persistence import db
-from src.persistence import FileRepository
 
 
 class User(db.Model):
@@ -45,7 +44,7 @@ class User(db.Model):
     @staticmethod
     def create(user: dict) -> "User":
         """Create a new user"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         users: list["User"] = User.get_all()
 
@@ -55,14 +54,14 @@ class User(db.Model):
 
         new_user = User(**user)
 
-        repo.save(new_user)
+        FileRepository.save(new_user)
 
         return new_user
 
     @staticmethod
     def update(user_id: str, data: dict) -> "User | None":
         """Update an existing user"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         user: User | None = User.get(user_id)
 
@@ -76,7 +75,6 @@ class User(db.Model):
         if "last_name" in data:
             user.last_name = data["last_name"]
 
-        repo.update(user)
+        FileRepository.update(user)
 
-        db.session.commit()
         return user
