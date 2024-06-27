@@ -1,9 +1,8 @@
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
+from sqlalchemy import engine_from_config, pool
 from alembic import context
+import os
+import sys
 
 # il s'agit de l'objet Alembic Config, qui fournit
 # l'accès aux valeurs du fichier .ini utilisé.
@@ -17,14 +16,13 @@ if config.config_file_name is not None:
 # ajoutez l'objet MetaData de votre modèle ici
 # pour le support 'autogénérer
 # from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+from models import Base
+target_metadata = Base.metadata
 
 # autres valeurs de la configuration, définies par les besoins de env.py,
 # peuvent être acquises :
 # mon_option_importante = config.get_main_option("mon_option_importante")
 # ... etc.
-
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -49,7 +47,6 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
-
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
@@ -70,7 +67,6 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
-
 
 if context.is_offline_mode():
     run_migrations_offline()

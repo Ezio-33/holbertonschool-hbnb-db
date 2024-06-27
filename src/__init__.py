@@ -3,10 +3,13 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
 cors = CORS()
+migrate = Migrate()
 
+from models import User, Place, City, Country, Amenity, Review, Place_Amenity
 
 def create_app() -> Flask:
     """
@@ -34,6 +37,7 @@ def register_extensions(app: Flask) -> None:
     """Register the extensions for the Flask app"""
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     db.init_app(app)
+    migrate.init_app(app, db)
 
 
 def register_routes(app: Flask) -> None:
