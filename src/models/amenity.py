@@ -2,13 +2,15 @@
 Amenity related functionality
 """
 
-from src.models.base import Base
+from src.persistence import db
 
 
-class Amenity(Base):
+class Amenity(db.Model):
     """Amenity representation"""
-
-    name: str
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
     def __init__(self, name: str, **kw) -> None:
         """Dummy init"""
@@ -32,18 +34,18 @@ class Amenity(Base):
     @staticmethod
     def create(data: dict) -> "Amenity":
         """Create a new amenity"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         amenity = Amenity(**data)
 
-        repo.save(amenity)
+        FileRepository.save(amenity)
 
         return amenity
 
     @staticmethod
     def update(amenity_id: str, data: dict) -> "Amenity | None":
         """Update an existing amenity"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         amenity: Amenity | None = Amenity.get(amenity_id)
 
@@ -53,12 +55,12 @@ class Amenity(Base):
         if "name" in data:
             amenity.name = data["name"]
 
-        repo.update(amenity)
+        FileRepository.update(amenity)
 
         return amenity
 
 
-class PlaceAmenity(Base):
+class PlaceAmenity(db.Model):
     """PlaceAmenity representation"""
 
     place_id: str
@@ -88,9 +90,9 @@ class PlaceAmenity(Base):
     @staticmethod
     def get(place_id: str, amenity_id: str) -> "PlaceAmenity | None":
         """Get a PlaceAmenity object by place_id and amenity_id"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
-        place_amenities: list[PlaceAmenity] = repo.get_all("placeamenity")
+        place_amenities: list[PlaceAmenity] = FileRepository.get_all("placeamenity")
 
         for place_amenity in place_amenities:
             if (
@@ -104,25 +106,25 @@ class PlaceAmenity(Base):
     @staticmethod
     def create(data: dict) -> "PlaceAmenity":
         """Create a new PlaceAmenity object"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         new_place_amenity = PlaceAmenity(**data)
 
-        repo.save(new_place_amenity)
+        FileRepository.save(new_place_amenity)
 
         return new_place_amenity
 
     @staticmethod
     def delete(place_id: str, amenity_id: str) -> bool:
         """Delete a PlaceAmenity object by place_id and amenity_id"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         place_amenity = PlaceAmenity.get(place_id, amenity_id)
 
         if not place_amenity:
             return False
 
-        repo.delete(place_amenity)
+        FileRepository.delete(place_amenity)
 
         return True
 
