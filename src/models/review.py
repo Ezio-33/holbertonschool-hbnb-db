@@ -2,18 +2,20 @@
 Review related functionality
 """
 
-from src.models.base import Base
+from src.persistence import db
 from src.models.place import Place
 from src.models.user import User
 
 
-class Review(Base):
+class Review(DBRepository):
     """Review representation"""
-
-    place_id: str
-    user_id: str
-    comment: str
-    rating: float
+    id = db.Column(db.String(36), primary_key=True)
+    comment = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('place.id'), nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
     def __init__(
         self, place_id: str, user_id: str, comment: str, rating: float, **kw
@@ -45,7 +47,7 @@ class Review(Base):
     @staticmethod
     def create(data: dict) -> "Review":
         """Create a new review"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         user: User | None = User.get(data["user_id"])
 
@@ -59,14 +61,14 @@ class Review(Base):
 
         new_review = Review(**data)
 
-        repo.save(new_review)
+        FileRepository.save(new_review)
 
         return new_review
 
     @staticmethod
     def update(review_id: str, data: dict) -> "Review | None":
         """Update an existing review"""
-        from src.persistence import repo
+        from src.persistence.file import FileRepository
 
         review = Review.get(review_id)
 
@@ -76,6 +78,6 @@ class Review(Base):
         for key, value in data.items():
             setattr(review, key, value)
 
-        repo.update(review)
+        FileRepository.update(review)
 
         return review
