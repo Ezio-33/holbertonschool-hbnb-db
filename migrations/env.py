@@ -4,6 +4,9 @@ from alembic import context
 import os
 import sys
 
+# Ajouter le chemin du projet au sys.path pour que les modules puissent être trouvés
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 # il s'agit de l'objet Alembic Config, qui fournit
 # l'accès aux valeurs du fichier .ini utilisé.
 config = context.config
