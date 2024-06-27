@@ -2,28 +2,33 @@
 Place related functionality
 """
 
-from src.models.base import Base
+from src.persistence import db
 from src.models.city import City
 from src.models.user import User
 
 
-class Place(Base):
+class Place(db.Model):
     """Place representation"""
-
-    name: str
-    description: str
-    address: str
-    latitude: float
-    longitude: float
-    host_id: str
-    city_id: str
-    price_per_night: int
-    number_of_rooms: int
-    number_of_bathrooms: int
-    max_guests: int
+    id = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    address = db.Column(db.String(255), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    host_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    city_id = db.Column(db.String(36), db.ForeignKey('city.id'), nullable=False)
+    price_per_night = db.Column(db.Integer, nullable=False)
+    number_of_rooms = db.Column(db.Integer, nullable=False)
+    number_of_bathrooms = db.Column(db.Integer, nullable=False)
+    max_guests = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
 
     def __init__(self, data: dict | None = None, **kw) -> None:
-        """Dummy init"""
+        """ Initialize with the attributs name, description, address, latitude,
+            longitude, host_id, city_id, price_per_night, number_of_rooms,
+            number_of_bathrooms, max_guests.
+        """
         super().__init__(**kw)
 
         if not data:
@@ -42,11 +47,11 @@ class Place(Base):
         self.max_guests = int(data.get("max_guests", 0))
 
     def __repr__(self) -> str:
-        """Dummy repr"""
+        """ String representation of Place. """
         return f"<Place {self.id} ({self.name})>"
 
     def to_dict(self) -> dict:
-        """Dictionary representation of the object"""
+        """ Dictionary representation of the object. """
         return {
             "id": self.id,
             "name": self.name,
@@ -66,8 +71,8 @@ class Place(Base):
 
     @staticmethod
     def create(data: dict) -> "Place":
-        """Create a new place"""
-        from src.persistence import repo
+        """ Create a new place. """
+        from src.persistence.file import FileRepository
 
         user: User | None = User.get(data["host_id"])
 
@@ -81,14 +86,14 @@ class Place(Base):
 
         new_place = Place(data=data)
 
-        repo.save(new_place)
+        FileRepository.save(new_place)
 
         return new_place
 
     @staticmethod
     def update(place_id: str, data: dict) -> "Place | None":
-        """Update an existing place"""
-        from src.persistence import repo
+        """ Update an existing place. """
+        from src.persistence.file import FileRepository
 
         place: Place | None = Place.get(place_id)
 
@@ -98,6 +103,6 @@ class Place(Base):
         for key, value in data.items():
             setattr(place, key, value)
 
-        repo.update(place)
+        FileRepository.update(place)
 
         return place
