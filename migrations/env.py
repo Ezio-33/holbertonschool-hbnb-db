@@ -19,7 +19,7 @@ if config.config_file_name is not None:
 # ajoutez l'objet MetaData de votre modèle ici
 # pour le support 'autogénérer
 # from myapp import mymodel
-from models import Base
+from src.models import Base
 target_metadata = Base.metadata
 
 # autres valeurs de la configuration, définies par les besoins de env.py,
