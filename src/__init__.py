@@ -1,15 +1,18 @@
 """ Initialize the Flask app. """
 
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 from flask_migrate import Migrate
 
+
+load_dotenv()
 db = SQLAlchemy()
 cors = CORS()
 migrate = Migrate()
 
-from models import User, Place, City, Country, Amenity, Review, Place_Amenity
 
 def create_app() -> Flask:
     """
@@ -21,10 +24,14 @@ def create_app() -> Flask:
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    if app.config('DEBUG'):
+    app.config.from_object('config.DevelopmentConfig'
+                           if os.environ.get('ENV') == 'development'
+                           else 'config.ProductionConfig')
+    
+    if app.config['ENV'] == 'development':
         print("The application is running in development mode.")
     else:
-        print("The application is not running in development mode.")
+        print("The application is running in production mode.")
 
     register_extensions(app)
     register_routes(app)
