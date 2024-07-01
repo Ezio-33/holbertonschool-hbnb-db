@@ -44,7 +44,7 @@ class User(db.Model):
     @staticmethod
     def create(user: dict) -> "User":
         """Create a new user"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         users: list["User"] = User.get_all()
 
@@ -54,14 +54,14 @@ class User(db.Model):
 
         new_user = User(**user)
 
-        FileRepository.save(new_user)
+        repo.save(new_user)
 
         return new_user
 
     @staticmethod
     def update(user_id: str, data: dict) -> "User | None":
         """Update an existing user"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         user: User | None = User.get(user_id)
 
@@ -75,6 +75,6 @@ class User(db.Model):
         if "last_name" in data:
             user.last_name = data["last_name"]
 
-        FileRepository.update(user)
+        repo.update(user)
 
         return user
