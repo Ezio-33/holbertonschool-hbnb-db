@@ -1,17 +1,14 @@
 """
 Amenity related functionality
 """
+from src.models.base import Base
+from src import db
 
-from src.persistence import db
 
-
-class Amenity(db.Model):
+class Amenity(Base):
     """Amenity representation"""
-    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-
+    
     def __init__(self, name: str, **kw) -> None:
         """Dummy init"""
         super().__init__(**kw)
@@ -60,11 +57,11 @@ class Amenity(db.Model):
         return amenity
 
 
-class PlaceAmenity(db.Model):
+class PlaceAmenity(Base):
     """PlaceAmenity representation"""
 
-    place_id: str
-    amenity_id: str
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+    amenity_id = db.Column(db.Integer, db.ForeignKey('amenities.id'), nullable=False)
 
     def __init__(self, place_id: str, amenity_id: str, **kw) -> None:
         """Dummy init"""

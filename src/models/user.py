@@ -2,18 +2,17 @@
 User related functionality
 """
 
-from src.models import base
-from src.persistence import db
+from src.models.base import Base
+from src import db
 
 
-class User(base):
+class User(Base):
     """ """
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     first_name = db.Column(db.String(120), nullable=False)
     last_name = db.Column(db.String(120), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
-    
 
     def __init__(self, email: str, password: str, first_name: str, last_name: str, **kw):
         """ Initialize an user with the attributs email, password, first_name

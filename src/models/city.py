@@ -2,18 +2,16 @@
 City related functionality
 """
 
-from src.persistence import db
+from src.models.base import Base
+from src import db
 from src.models.country import Country
 
 
-class City(db.Model):
+class City(Base):
     """City representation"""
-    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     country_code = db.Column(db.String(36), db.ForeignKey('country.code'), nullable=False)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
-
+    
     def __init__(self, name: str, country_code: str, **kw) -> None:
         """Dummy init"""
         super().__init__(**kw)
