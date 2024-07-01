@@ -1,37 +1,30 @@
 """ Initialize the Flask app. """
 
-import os
 from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from dotenv import load_dotenv
-from flask_migrate import Migrate
 
 
-load_dotenv()
 db = SQLAlchemy()
 cors = CORS()
-migrate = Migrate()
+
 
 
 def create_app() -> Flask:
     """
-    Create a Flask app with the given configuration class.
-    The default configuration class is DevelopmentConfig.
+    Créer une application Flask avec la classe de configuration donnée.
+    La classe de configuration par défaut est DevelopmentConfig.
     """
     app = Flask(__name__)
     app.url_map.strict_slashes = False
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///development.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config.from_object('config.DevelopmentConfig'
-                           if os.environ.get('ENV') == 'development'
-                           else 'config.ProductionConfig')
-    
-    if app.config['ENV'] == 'development':
+    if app.config['DEBUG']:
         print("The application is running in development mode.")
     else:
         print("The application is running in production mode.")
+
 
     register_extensions(app)
     register_routes(app)
@@ -39,18 +32,13 @@ def create_app() -> Flask:
 
     return app
 
-
 def register_extensions(app: Flask) -> None:
-    """Register the extensions for the Flask app"""
+    """Enregistrer les extensions pour l'application Flask"""
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     db.init_app(app)
-    migrate.init_app(app, db)
-
 
 def register_routes(app: Flask) -> None:
-    """Import and register the routes for the Flask app"""
-
-    # Import the routes here to avoid circular imports
+    """Importer et enregistrer les routes pour l'application Flask"""
     from src.routes.users import users_bp
     from src.routes.countries import countries_bp
     from src.routes.cities import cities_bp
@@ -58,7 +46,7 @@ def register_routes(app: Flask) -> None:
     from src.routes.amenities import amenities_bp
     from src.routes.reviews import reviews_bp
 
-    # Register the blueprints in the app
+    # Enregistrer les blueprints dans l'application
     app.register_blueprint(users_bp)
     app.register_blueprint(countries_bp)
     app.register_blueprint(cities_bp)
