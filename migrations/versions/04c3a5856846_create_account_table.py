@@ -31,6 +31,60 @@ def upgrade() -> None:
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('email')
                     )
+    op.create_table('amenity',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('name', sa.String(length=80), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('name')
+                    )
+    op.create_table('city',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('name', sa.String(length=80), nullable=False),
+                    sa.Column('country_code', sa.String(length=80), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('name')
+                    )
+    op.create_table('country',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('name', sa.String(length=80), nullable=False),
+                    sa.Column('code', sa.String(length=80), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('code')
+                    )
+    op.create_table('place',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('name', sa.String(length=80), nullable=False),
+                    sa.Column('description', sa.String(length=80), nullable=False),
+                    sa.Column('address', sa.String(length=80), nullable=False),
+                    sa.Column('latitude', sa.Float(), nullable=False),
+                    sa.Column('longitude', sa.Float(), nullable=False),
+                    sa.Column('host_id', sa.Integer(), nullable=False),
+                    sa.Column('city_id', sa.Integer(), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.ForeignKeyConstraint(['city_id'], ['city.id'], ),
+                    sa.ForeignKeyConstraint(['host_id'], ['User.id'], ),
+                    sa.UniqueConstraint('name')
+                    )
+    op.create_table('review',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('rating', sa.Integer(), nullable=False),
+                    sa.Column('comment', sa.String(length=80), nullable=False),
+                    sa.Column('user_id', sa.Integer(), nullable=False),
+                    sa.Column('place_id', sa.Integer(), nullable=False),
+                    sa.Column('created_at', sa.DateTime(), nullable=False),
+                    sa.Column('updated_at', sa.DateTime(), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.ForeignKeyConstraint(['place_id'], ['place.id'], ),
+                    sa.ForeignKeyConstraint(['user_id'], ['User.id'], )
+                    )
 
 
 def downgrade() -> None:
