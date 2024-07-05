@@ -4,13 +4,15 @@ to be used based on the environment variable REPOSITORY_ENV_VAR."""
 import os
 
 from src.persistence.repository import Repository
+from sqlalchemy.orm import Session
+
 
 repo: Repository
 
 if os.getenv(key="MY_ENV_VAR") == "db":
     from src.persistence.db import DBRepository
 
-    repo = DBRepository()
+    repo = DBRepository(session=Session())
 elif os.getenv("MY_ENV_VAR") == "file":
     from src.persistence.file import FileRepository
 

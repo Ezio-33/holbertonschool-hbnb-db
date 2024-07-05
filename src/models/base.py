@@ -1,6 +1,4 @@
 """ Abstract base class for all models """
-
-from sqlalchemy.ext.declarative import DeclarativeMeta, as_declarative
 from src import db
 from datetime import datetime
 from typing import Any, Optional
@@ -8,11 +6,10 @@ import uuid
 from abc import ABC, abstractmethod
 
 
-class Base(ABC, DeclarativeMeta):
+class Base(ABC):
     """
     Base Interface for all models
     """
-
     id = db.Column(db.String(36), primary_key=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, onupdate=db.func.current_timestamp())
