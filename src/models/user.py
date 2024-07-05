@@ -4,6 +4,7 @@ User related functionality
 
 from src.models.base import Base
 from src import db
+from werkzeug.security import generate_password_hash
 
 
 class User(Base):
@@ -22,7 +23,7 @@ class User(Base):
         """
         super().__init__(**kw)
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
         self.first_name = first_name
         self.last_name = last_name
 

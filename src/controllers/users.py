@@ -17,6 +17,9 @@ def create_user():
     """Creates a new user"""
     data = request.get_json()
 
+    if 'password' not in data:
+        abort(400, "Missing field: password")
+
     try:
         user = User.create(data)
     except KeyError as e:
