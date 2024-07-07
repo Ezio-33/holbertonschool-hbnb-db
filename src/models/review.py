@@ -45,7 +45,7 @@ class Review(Base):
     @staticmethod
     def create(data: dict) -> "Review":
         """Create a new review"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         user: User | None = User.get(data["user_id"])
 
@@ -59,14 +59,14 @@ class Review(Base):
 
         new_review = Review(**data)
 
-        FileRepository.save(new_review)
+        repo.save(new_review)
 
         return new_review
 
     @staticmethod
     def update(review_id: str, data: dict) -> "Review | None":
         """Update an existing review"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         review = Review.get(review_id)
 
@@ -76,6 +76,6 @@ class Review(Base):
         for key, value in data.items():
             setattr(review, key, value)
 
-        FileRepository.update(review)
+        repo.update(review)
 
         return review
