@@ -3,7 +3,7 @@
 import requests
 import uuid
 
-from tests import test_functions
+from tests_class import test_functions
 
 API_URL = "http://localhost:5000"
 
@@ -18,6 +18,7 @@ def create_user():
         "email": unique_email,
         "first_name": "Test",
         "last_name": "User",
+        "password": "password_test_users"
     }
     response = requests.post(f"{API_URL}/users", json=new_user)
     assert (
