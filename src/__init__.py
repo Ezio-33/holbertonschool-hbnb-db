@@ -9,7 +9,6 @@ db = SQLAlchemy()
 cors = CORS()
 
 
-
 def create_app() -> Flask:
     """
     Créer une application Flask avec la classe de configuration donnée.
@@ -36,6 +35,7 @@ def register_extensions(app: Flask) -> None:
     """Enregistrer les extensions pour l'application Flask"""
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     db.init_app(app)
+
 
 def register_routes(app: Flask) -> None:
     """Importer et enregistrer les routes pour l'application Flask"""

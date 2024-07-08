@@ -70,7 +70,7 @@ class Place(Base):
     @staticmethod
     def create(data: dict) -> "Place":
         """ Create a new place. """
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         user: User | None = User.get(data["host_id"])
 
@@ -84,14 +84,14 @@ class Place(Base):
 
         new_place = Place(data=data)
 
-        FileRepository.save(new_place)
+        repo.save(new_place)
 
         return new_place
 
     @staticmethod
     def update(place_id: str, data: dict) -> "Place | None":
         """ Update an existing place. """
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         place: Place | None = Place.get(place_id)
 
@@ -101,6 +101,6 @@ class Place(Base):
         for key, value in data.items():
             setattr(place, key, value)
 
-        FileRepository.update(place)
+        repo.update(place)
 
         return place

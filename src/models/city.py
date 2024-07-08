@@ -36,7 +36,7 @@ class City(Base):
     @staticmethod
     def create(data: dict) -> "City":
         """Create a new city"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         country = Country.get(data["country_code"])
 
@@ -45,14 +45,14 @@ class City(Base):
 
         city = City(**data)
 
-        FileRepository.save(city)
+        repo.save(city)
 
         return city
 
     @staticmethod
     def update(city_id: str, data: dict) -> "City":
         """Update an existing city"""
-        from src.persistence.file import FileRepository
+        from src.persistence import repo
 
         city = City.get(city_id)
 
@@ -62,6 +62,6 @@ class City(Base):
         for key, value in data.items():
             setattr(city, key, value)
 
-        FileRepository.update(city)
+        repo.update(city)
 
         return city

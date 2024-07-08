@@ -4,7 +4,7 @@ This module exports a Repository that persists data in a JSON file
 
 from datetime import datetime
 import json
-from src.models.base import Base
+from src.persistence import db
 from src.persistence.repository import Repository
 from utils.constants import FILE_STORAGE_FILENAME
 
@@ -80,7 +80,7 @@ class FileRepository(Repository):
 
         for model, data in file_data.items():
             for item in data:
-                instance: Base = models[model](**item)
+                instance: db = models[model](**item)
 
                 if "created_at" in item:
                     instance.created_at = datetime.fromisoformat(
@@ -93,7 +93,7 @@ class FileRepository(Repository):
 
                 self.save(data=instance, save_to_file=False)
 
-    def save(self, data: Base, save_to_file=True):
+    def save(self, data: db, save_to_file=True):
         """Save an object to the repository"""
         model: str = data.__class__.__name__.lower()
 
@@ -105,7 +105,7 @@ class FileRepository(Repository):
         if save_to_file:
             self._save_to_file()
 
-    def update(self, obj: Base):
+    def update(self, obj: db):
         """Update an object in the repository"""
         cls = obj.__class__.__name__.lower()
 
@@ -118,7 +118,7 @@ class FileRepository(Repository):
 
         return None
 
-    def delete(self, obj: Base):
+    def delete(self, obj: db):
         """Delete an object from the repository"""
         class_name = obj.__class__.__name__.lower()
 

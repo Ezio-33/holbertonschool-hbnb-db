@@ -4,10 +4,13 @@ User related functionality
 
 from src.models.base import Base
 from src import db
+from werkzeug.security import generate_password_hash
 
 
 class User(Base):
     """ """
+    __tablename__ = 'users'
+
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     first_name = db.Column(db.String(120), nullable=False)
@@ -20,7 +23,7 @@ class User(Base):
         """
         super().__init__(**kw)
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
         self.first_name = first_name
         self.last_name = last_name
 

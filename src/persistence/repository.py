@@ -15,7 +15,7 @@ class Repository(ABC):
         """Get all objects of a model"""
 
     @abstractmethod
-    def get(self, model_name: str, id: str) -> None:
+    def get(self, model_name: str, obj_id: str) -> None:
         """Get an object by id"""
 
     @abstractmethod
